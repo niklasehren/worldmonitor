@@ -304,7 +304,8 @@ export function Briefing() {
       );
     }
     if (st.art === "laedt") return <p className="text-[14px] text-muted">Lade …</p>;
-    if (st.art === "keine") return <p className="text-[14px] text-muted">Wenig Berichterstattung in den letzten 48 Stunden</p>;
+    if (st.art === "keine")
+      return <p className="text-[14px] text-muted">{welt?.beispiel ? "Dieses Land ist in den Beispieldaten nicht enthalten." : "Für dieses Land sind gerade keine Daten verfügbar."}</p>;
     const d = st.datei;
     if (tab === "news") {
       return (

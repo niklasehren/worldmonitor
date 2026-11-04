@@ -26,7 +26,7 @@ export type LandDatei = {
 
 export type Index = { stand: string; laender: Record<string, { name: string }>; atlas: Record<string, string> };
 
-// Ergebnis eines Klicks: Daten, „wenig/keine Berichterstattung" (Datei fehlt, leer oder nicht lesbar) oder noch am Laden
+// Ergebnis eines Klicks: Daten, „keine Daten" (Datei fehlt, leer oder nicht lesbar) oder noch am Laden
 export type LandStatus = { art: "laedt" } | { art: "daten"; datei: LandDatei } | { art: "keine" };
 
 let indexPromise: Promise<Index | null> | null = null;
@@ -38,7 +38,7 @@ export function ladeIndex(): Promise<Index | null> {
 }
 
 const cache = new Map<string, Promise<LandStatus>>();
-// Atlas-Nummer der Karte (ISO-Nummer) -> Länderdatei. Fehlt die Datei oder ist sie leer oder kaputt: art "keine", nie ein Fehler.
+// Atlas-Nummer der Karte (ISO-Nummer) -> Länderdatei. Fehlt die Datei oder ist sie leer oder kaputt: art "keine" (sagt nichts über die Nachrichtenlage), nie ein Fehler.
 export function ladeLand(atlasId: string): Promise<LandStatus> {
   let p = cache.get(atlasId);
   if (!p) {
@@ -50,7 +50,7 @@ export function ladeLand(atlasId: string): Promise<LandStatus> {
         const r = await fetch(`${DATEN}/countries/${iso}.json`);
         if (!r.ok) return { art: "keine" };
         const datei = (await r.json()) as LandDatei;
-        return Array.isArray(datei.top) && datei.top.length ? { art: "daten", datei } : { art: "keine" };
+        return Array.isArray(datei.top) && (datei.top.length || datei.wenig === true) ? { art: "daten", datei } : { art: "keine" };
       } catch {
         return { art: "keine" };
       }
