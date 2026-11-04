@@ -5,7 +5,7 @@ Kurzübergabe für eine neue Sitzung ohne den bisherigen Verlauf. Kennzeichnung:
 ## 1. Ziel und Vorgaben
 - Persönliches, **vollautomatisches Weltportal** (Globus plus Panels): ernstes Briefing zu Krieg, Politik, Katastrophen, Wirtschaft, internationaler Lage. **Kein** Lokalkrimi, Lifestyle, Sport, Unterhaltung, Krypto-Kurs.
 - Länder (später Regionen, Städte) anklickbar mit Neuigkeiten und Fakten; vier Lagen als Einstieg (Iran · USA · Israel, Russland · Ukraine, China · Taiwan, Nord · Südkorea).
-- **Kein Geld, keine Konten ohne OK.** Hauptsprache Deutsch, Titel im Original. Stack: Next.js 16, TypeScript, Tailwind v4, MapLibre GL 6.15.0 (Globus), world-atlas 2.0.2 (Grenzen), GDELT-Dateien als Datenquelle.
+- **Kein Geld, keine Konten ohne OK.** Oberfläche zweisprachig (Deutsch und Englisch, `components/i18n/`), Schlagzeilen im Original (keine maschinelle Übersetzung, beschlossen). Stack: Next.js 16, TypeScript, Tailwind v4, MapLibre GL 6.15.0 (Globus), world-atlas 2.0.2 (Grenzen), GDELT-Dateien als Datenquelle.
 - Der Nutzer hat keinen Entwickler-Hintergrund: Fachbegriffe kurz erklären, Schritte einzeln, **vor Installationen fragen**.
 
 ## 2. Entscheidungen (Stand `docs/entscheidungen.md` plus spätere Beschlüsse)
@@ -19,7 +19,7 @@ Kurzübergabe für eine neue Sitzung ohne den bisherigen Verlauf. Kennzeichnung:
 - **Krypto:** Hacks und Diebstähle (Sicherheit, Sanktionen) **bleiben**, **reine Kursmeldungen fliegen raus** (`rettung`-Liste in `config/ausschluss.json`).
 - Ernst-Filter ohne Personennamen und ohne mehrdeutige Einzelwörter; GKG-Themen ausgeschaltet (an Tag 1/2 mehrfach falsch).
 - Grafik: Satellitentextur (NASA Blue Marble plus Nachtlichter), Glas-Panels, Stufen Top rot, Wichtig blau, Am Rande grau, Schriften Inter und JetBrains Mono; Test-Schalter statt Entscheidung bei Glas, Leuchtrand, Textur.
-- Offen und nicht beschlossen: Takt (60 oder 120 Min.), Gewichtskandidat gegen Zeitungsketten, Themenklassifikation, Übersetzung, Gratis-Limits von GitHub/Vercel/Supabase, Regionen und Städte.
+- Offen und nicht beschlossen: Takt (60 oder 120 Min.), Gewichtskandidat gegen Zeitungsketten, Themenklassifikation, Gratis-Limits von GitHub/Vercel/Supabase, Regionen und Städte.
 
 ## 3. Was gebaut ist (die folgenden Commits B2 bis E2 sind nach der Kürzung nur noch in der lokalen Sicherung)
 | Commit | Inhalt |

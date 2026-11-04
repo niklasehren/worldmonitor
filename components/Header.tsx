@@ -1,30 +1,39 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useI18n, type Lang } from "./i18n";
 import { normSuche } from "./laender";
 
-// Von West nach Ost. IANA-Zeitzonen, damit Sommer-/Winterzeit automatisch stimmt.
-const CLOCKS = [
-  { city: "Los Angeles", tz: "America/Los_Angeles" },
-  { city: "Washington", tz: "America/New_York" },
-  { city: "Wien", tz: "Europe/Vienna" },
-  { city: "Moskau", tz: "Europe/Moscow" },
-  { city: "Dubai", tz: "Asia/Dubai" },
-  { city: "Peking", tz: "Asia/Shanghai" },
-] as const;
+// Von West nach Ost. IANA-Zeitzonen, damit Sommer-/Winterzeit automatisch stimmt. Städtenamen stehen in den Übersetzungsdateien (kopf.staedte).
+const CLOCKS = ["America/Los_Angeles", "America/New_York", "Europe/Vienna", "Europe/Moscow", "Asia/Dubai", "Asia/Shanghai"] as const;
 
-function formatTime(tz: string, now: Date) {
-  return new Intl.DateTimeFormat("de-AT", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(now);
+type Land = { iso: string; name: string; alt: string };
+
+// Sprachumschalter DE/EN (merkt die Wahl, siehe i18n)
+function Umschalter() {
+  const { lang, setLang, t } = useI18n();
+  return (
+    <div role="group" aria-label={t.sprache.label} className="flex shrink-0 overflow-hidden rounded-lg border border-[var(--wm-glass-border)] font-mono text-[12px]">
+      {(["de", "en"] as Lang[]).map((l) => (
+        <button
+          key={l}
+          type="button"
+          lang={l}
+          aria-pressed={lang === l}
+          title={t.sprache[l]}
+          onClick={() => setLang(l)}
+          className={`h-9 px-2.5 ${lang === l ? "bg-white/15 text-text" : "text-muted hover:bg-white/10 hover:text-text"}`}
+        >
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
 }
 
-function formatDate(now: Date) {
-  return new Intl.DateTimeFormat("de-AT", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Vienna" }).format(now);
-}
-
-type Land = { iso: string; name: string };
-
-// Suchfeld mit Vorschlägen (deutsche Ländernamen). Pfeiltasten, Eingabe wählt, Escape schließt.
+// Suchfeld mit Vorschlägen (Ländernamen in der gewählten Sprache, gefunden wird auch der Name in der anderen). Pfeiltasten, Eingabe wählt, Escape schließt.
 function Suche({ laender, onPick }: { laender: Land[]; onPick: (iso: string) => void }) {
+  const { t, sortiere } = useI18n();
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
   const [aktiv, setAktiv] = useState(0);
@@ -33,10 +42,11 @@ function Suche({ laender, onPick }: { laender: Land[]; onPick: (iso: string) => 
   const treffer = useMemo(() => {
     const n = normSuche(q.trim());
     if (!n) return [];
-    const mit = laender.filter((l) => normSuche(l.name).includes(n));
+    const mit = laender.filter((l) => normSuche(l.name).includes(n) || normSuche(l.alt).includes(n));
     // Namen, die mit dem Suchtext beginnen, zuerst
-    return mit.sort((a, b) => Number(normSuche(b.name).startsWith(n)) - Number(normSuche(a.name).startsWith(n)) || a.name.localeCompare(b.name, "de")).slice(0, 7);
-  }, [q, laender]);
+    const beginnt = (l: Land) => Number(normSuche(l.name).startsWith(n) || normSuche(l.alt).startsWith(n));
+    return mit.sort((a, b) => beginnt(b) - beginnt(a) || sortiere(a.name, b.name)).slice(0, 7);
+  }, [q, laender, sortiere]);
   useEffect(() => {
     const off = (e: PointerEvent) => !box.current?.contains(e.target as Node) && setOpen(false);
     document.addEventListener("pointerdown", off);
@@ -57,8 +67,8 @@ function Suche({ laender, onPick }: { laender: Land[]; onPick: (iso: string) => 
         aria-controls={listId}
         aria-autocomplete="list"
         aria-activedescendant={zeigen && treffer[aktiv] ? `${listId}-${aktiv}` : undefined}
-        aria-label="Land suchen"
-        placeholder="Land suchen"
+        aria-label={t.kopf.suchen}
+        placeholder={t.kopf.suchen}
         autoComplete="off"
         value={q}
         onChange={(e) => {
@@ -76,7 +86,7 @@ function Suche({ laender, onPick }: { laender: Land[]; onPick: (iso: string) => 
         className="h-9 w-full rounded-lg border border-[var(--wm-glass-border)] bg-white/[0.06] px-3 text-[14px] text-text placeholder:text-muted"
       />
       {zeigen && (
-        <ul id={listId} role="listbox" aria-label="Vorschläge" className="absolute top-[42px] right-0 left-0 z-40 m-0 list-none overflow-hidden rounded-lg border border-[var(--wm-glass-border)] bg-[#0A0F16] p-1">
+        <ul id={listId} role="listbox" aria-label={t.kopf.vorschlaege} className="absolute top-[42px] right-0 left-0 z-40 m-0 list-none overflow-hidden rounded-lg border border-[var(--wm-glass-border)] bg-[#0A0F16] p-1">
           {treffer.length ? (
             treffer.map((l, i) => (
               <li
@@ -92,7 +102,7 @@ function Suche({ laender, onPick }: { laender: Land[]; onPick: (iso: string) => 
               </li>
             ))
           ) : (
-            <li className="px-2.5 py-1.5 text-[14px] text-muted">Kein Land gefunden</li>
+            <li className="px-2.5 py-1.5 text-[14px] text-muted">{t.kopf.keinLand}</li>
           )}
         </ul>
       )}
@@ -101,6 +111,7 @@ function Suche({ laender, onPick }: { laender: Land[]; onPick: (iso: string) => 
 }
 
 export function Header({ stand, beispiel, laender, onPick }: { stand: string | null; beispiel: boolean; laender: Land[]; onPick: (iso: string) => void }) {
+  const { t, datum, uhr } = useI18n();
   // Erst nach dem Laden im Browser setzen, damit Server und Browser nicht unterschiedlich rendern.
   const [now, setNow] = useState<Date | null>(null);
 
@@ -123,20 +134,21 @@ export function Header({ stand, beispiel, laender, onPick }: { stand: string | n
       </div>
       <span className="hidden h-6 w-px bg-[var(--wm-glass-border)] md:block" aria-hidden="true" />
       <span className="hidden shrink-0 font-mono text-[13px] text-muted lg:block">
-        Stand {stand ? formatDate(new Date(stand)) : "nicht verfügbar"}
+        {t.kopf.stand} {stand ? datum(new Date(stand)) : t.fuss.nichtVerfuegbar}
       </span>
       <Suche laender={laender} onPick={onPick} />
-      <ul aria-label="Uhrzeiten" className="m-0 ml-auto hidden min-w-0 list-none gap-5 overflow-x-auto p-0 sm:flex">
-        {CLOCKS.map((c) => (
-          <li key={c.tz} className="shrink-0 text-right">
-            <span className="block font-mono text-[15px] leading-tight tabular-nums">{now ? formatTime(c.tz, now) : "--:--"}</span>
-            <span className="block text-[13px] leading-tight text-muted">{c.city}</span>
+      <Umschalter />
+      <ul aria-label={t.kopf.uhrzeiten} className="m-0 ml-auto hidden min-w-0 list-none gap-5 overflow-x-auto p-0 sm:flex">
+        {CLOCKS.map((tz) => (
+          <li key={tz} className="shrink-0 text-right">
+            <span className="block font-mono text-[15px] leading-tight tabular-nums">{now ? uhr(tz, now) : "--:--"}</span>
+            <span className="block text-[13px] leading-tight text-muted">{t.kopf.staedte[tz]}</span>
           </li>
         ))}
       </ul>
       {beispiel && (
         <span className="hidden shrink-0 border border-[var(--wm-glass-border)] px-2 py-0.5 text-[13px] tracking-[0.08em] text-muted uppercase lg:block">
-          Beispieldaten
+          {t.beispiel.badgeKopf}
         </span>
       )}
     </header>

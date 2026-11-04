@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { I18nProvider } from "@/components/i18n";
 
 // Schriften liegen lokal in design/fonts (Inter und JetBrains Mono, beide SIL Open Font License 1.1).
 const inter = localFont({
@@ -25,7 +26,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" className={`${inter.variable} ${jbMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <I18nProvider>{children}</I18nProvider>
+      </body>
     </html>
   );
 }

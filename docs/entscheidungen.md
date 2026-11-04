@@ -28,7 +28,13 @@ Kennzeichnung: **gemessen** = aus den Daten gezählt; **Einschätzung** = mein U
 - **Verlauf:** vor dem ersten Push auf einen einzigen frischen Commit reduziert; vollständige Sicherung als lokale `git bundle`-Datei unter `data/backup/` (nicht versioniert).
 - Weiter offen: Gewichtskandidat gegen Zeitungsketten.
 
-Noch offen (nicht beschlossen): Takt (60 oder 120 Min.), Titel-Schwelle, Lagen-Liste und Stichwörter, Übersetzungsstrom, Gratis-Limits von GitHub/Supabase/Vercel. `PLAN.md` ist weiterhin unverändert; Änderungen dort erst nach ausdrücklichem OK.
+## Beschlossen (04.11.2026, vom Nutzer, nach F1)
+
+- **Schlagzeilen bleiben in der Originalsprache, keine maschinelle Übersetzung.** Der Übersetzungstest (F2-Idee) entfällt; die Messung aus F1 (OPUS-MT en-de: 20 % gut, 48 % brauchbar, 33 % sinnentstellend, Einschätzung, n 40) bleibt in `docs/bericht-f1.md`. Im Panel steht der Hinweis „Schlagzeilen in Originalsprache" bzw. „Headlines in original language".
+- **Oberfläche zweisprachig (Deutsch, Englisch):** Sprache aus `navigator.languages` (erste Sprache der Liste, die Deutsch oder Englisch ist, sonst Englisch); Umschalter DE/EN im Kopf, Wahl im Browser gemerkt (localStorage, mit Ausfallschutz); `?lang=de` und `?lang=en` in der Adresse gehen vor und werden beim Umschalten nachgeführt; das `lang`-Attribut der Seite folgt. Alle Oberflächentexte stehen in `components/i18n/de.ts` und `en.ts`. Länder-, Sprach- und Währungsnamen über `Intl.DisplayNames`, Zahlen über `Intl.NumberFormat`, Zeiten über `Intl.DateTimeFormat`, „vor X Std." über `Intl.RelativeTimeFormat`; kein neues Paket.
+- **Fakten:** Hauptstädte deutsch und englisch aus Wikidata (CC0, eine zusätzliche Abfrage am 04.11.2026, `data/fakten/q2.rq`); Sprachen und Währungen als ISO-Codes, Kontinente als Schlüssel. Die Daten selbst (Ländernamen in `world.json`, Titel) bleiben unverändert.
+
+Noch offen (nicht beschlossen): Takt (60 oder 120 Min.), Titel-Schwelle, Lagen-Liste und Stichwörter, Gratis-Limits von GitHub/Supabase/Vercel. `PLAN.md` ist weiterhin unverändert; Änderungen dort erst nach ausdrücklichem OK.
 
 Hinweis: Die Abschnitte unten sind der Stand vom 01.11.2026 und werden durch diese Beschlüsse in den genannten Punkten überholt (Punkt 3 Länderfaktoren, Punkt 4 Eilmeldung, Punkt 1 DOC-API).
 

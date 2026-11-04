@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { Map as MapLibreMap, Marker, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { borderLinesFromTopology, countriesFromTopology, type Topology } from "./topo";
-import { START, TIER_LABEL, type Tier } from "./globe-data";
+import { START, type Tier } from "./globe-data";
+import { useI18n } from "./i18n";
 
 const MERC_LAT = 85.0511287798;
 // Verhältnis aus gemessenem Globus-Durchmesser (Screenshot) und der Formel 512 · 2^zoom / π
@@ -53,6 +54,7 @@ function fitZoom(el: HTMLElement, pad: Padding) {
 }
 
 export function Globe({ markers: markerData, glow, gruppen: gruppieren, selectedNr, selectedCountry, view, padding, texture, onSelectPoint, onSelectCountry, onError }: Props) {
+  const { t } = useI18n();
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const glowEl = useRef<HTMLDivElement>(null);
@@ -230,7 +232,7 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
       b.className = `wm-marker wm-marker--${p.tier}`;
       b.textContent = String(p.nr);
       b.setAttribute("aria-pressed", "false");
-      b.setAttribute("aria-label", `Meldung ${p.nr}, ${TIER_LABEL[p.tier]}: ${p.label}`);
+      b.setAttribute("aria-label", t.karte.marker(p.nr, t.tier[p.tier], p.label));
       b.addEventListener("click", (e) => {
         e.stopPropagation();
         cb.current.onSelectPoint(p.nr);
@@ -249,7 +251,7 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
       const d = document.createElement("div");
       d.className = "wm-gruppenliste";
       d.setAttribute("role", "dialog");
-      d.setAttribute("aria-label", "Meldungen in dieser Gruppe");
+      d.setAttribute("aria-label", t.karte.gruppenliste);
       d.addEventListener("click", (e) => e.stopPropagation());
       for (const m of mitglieder) {
         const z = document.createElement("button");
@@ -264,7 +266,7 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
         const z = document.createElement("button");
         z.type = "button";
         z.className = "wm-gruppenliste-zoom";
-        z.textContent = "Hineinzoomen";
+        z.textContent = t.karte.hineinzoomen;
         z.addEventListener("click", () => { schliesseListe(); map.easeTo({ center: mitte, zoom: Math.min(limitZoom.current, map.getZoom() + 1.5), duration: 800 }); });
         d.appendChild(z);
       }
@@ -308,7 +310,7 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
         g.className = "wm-marker wm-marker--gruppe";
         g.textContent = rang.length <= 3 ? rang.join(" · ") : `${rang.slice(0, 2).join(" · ")} +${rang.length - 2}`;
         g.setAttribute("aria-pressed", String(nrs.includes(selectedRef.current ?? -1)));
-        g.setAttribute("aria-label", `Gruppe aus ${mem.length} Meldungen (Rang ${rang.join(", ")}); Klick zeigt die Liste`);
+        g.setAttribute("aria-label", t.karte.gruppe(rang.join(", ")));
         g.addEventListener("click", (e) => {
           e.stopPropagation();
           zeigeListe(g, mem.map((k) => items[k].p).sort((a, b) => a.nr - b.nr), [lon, lat], isos.size > 1);
@@ -332,7 +334,7 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
       for (const i of items) i.marker.remove();
       markers.current.clear();
     };
-  }, [markerData, gruppieren]);
+  }, [markerData, gruppieren, t]);
 
   // Auswahl von Punkt und Land nachführen
   useEffect(() => {
@@ -379,7 +381,7 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
   // maplibre-gl.css setzt für .maplibregl-map selbst position: relative; darum steht die Fläche in einer eigenen absoluten Hülle.
   return (
     <div className="absolute inset-0">
-      <div ref={mapEl} className="h-full w-full" role="region" aria-label="Globus mit Meldungen" />
+      <div ref={mapEl} className="h-full w-full" role="region" aria-label={t.karte.globus} />
       {glow && <div ref={glowEl} className="wm-glow pointer-events-none absolute inset-0" aria-hidden="true" />}
     </div>
   );

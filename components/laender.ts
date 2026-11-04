@@ -60,8 +60,6 @@ export function ladeLand(atlasId: string): Promise<LandStatus> {
   return p;
 }
 
-const fmt = new Intl.DateTimeFormat("de-AT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Vienna" });
-export const formatZeit = (iso: string) => fmt.format(new Date(iso));
 export const hostVon = (url: string) => {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -107,35 +105,18 @@ export function ladeWelt(): Promise<Welt | null> {
 // Anzeigetext einer Geschichte: Titel, sonst lesbarer Text aus der Adresse, sonst nichts (der Aufrufer zeigt dann die Domain)
 export const textVon = (g: { titel: string | null; adresstext: string | null }) => g.titel ?? g.adresstext;
 
-// Deutsche Ländernamen (Intl, ISO-Alpha-2) und Suche ohne Rücksicht auf Akzente und Groß-/Kleinschreibung
-const dnDe = new Intl.DisplayNames(["de"], { type: "region" });
-export const landNameDe = (iso: string) => {
-  try {
-    return dnDe.of(iso) ?? iso;
-  } catch {
-    return iso;
-  }
-};
+// Suche ohne Rücksicht auf Akzente und Groß-/Kleinschreibung (Ländernamen kommen aus Intl.DisplayNames, siehe i18n)
 export const normSuche = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/ß/g, "ss");
 
-// Alter relativ zum Datenstand (nicht zur aktuellen Uhrzeit)
-export function alterZuStand(zeit: string, stand: string) {
-  const min = Math.max(0, Math.round((new Date(stand).getTime() - new Date(zeit).getTime()) / 60000));
-  if (min < 5) return "aktuell";
-  if (min < 60) return `vor ${min} Min.`;
-  if (min < 48 * 60) return `vor ${Math.round(min / 60)} Std.`;
-  return `vor ${Math.round(min / 1440)} Tagen`;
-}
-
 // ---- Länderfakten (public/data/facts.json, aus Wikidata, CC0; scripts/build-facts.mjs) ----
+// Hauptstadt: ein Text oder [deutsch, englisch]; Sprachen: ISO-639-Codes; Währung: ISO-4217-Codes; Region: Kontinentschlüssel (Namen kommen aus Intl.DisplayNames bzw. den Übersetzungsdateien)
 export type Fakt = {
-  name: string;
-  hauptstadt: string | null;
+  hauptstadt: string | [string, string] | null;
   einwohner: { zahl: number; jahr: number | null } | null;
   flaeche: number | null;
   sprachen: string[] | null;
-  waehrung: string | null;
-  region: string | null;
+  waehrung: string[] | null;
+  region: string[] | null;
 };
 let faktenPromise: Promise<Record<string, Fakt> | null> | null = null;
 export function ladeFakten(): Promise<Record<string, Fakt> | null> {
@@ -146,4 +127,4 @@ export function ladeFakten(): Promise<Record<string, Fakt> | null> {
   return faktenPromise;
 }
 // Satzanfang groß (Titel aus Fremddaten beginnen oft klein)
-export const satzanfang = (s: string) => (s ? s.charAt(0).toLocaleUpperCase("de") + s.slice(1) : s);
+export const satzanfang = (s: string) => (s ? s.charAt(0).toLocaleUpperCase("en") + s.slice(1) : s);
