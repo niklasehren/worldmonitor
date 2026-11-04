@@ -14,6 +14,7 @@ on:
         type: boolean
         default: false
 
+# nie zwei Läufe gleichzeitig: ein neuer Lauf wartet, bis der laufende fertig ist (kein Abbruch)
 concurrency:
   group: daten
   cancel-in-progress: false
@@ -24,12 +25,13 @@ permissions:
 
 jobs:
   daten:
-    runs-on: ubuntu-latest
+    # feste Version statt ubuntu-latest: ubuntu-24.04 ist das Image, auf dem der erste erfolgreiche Lauf lief; ubuntu-latest wechselt demnächst auf 26.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 180
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -38,7 +40,7 @@ jobs:
 
       - name: Zustand wiederherstellen
         if: ${{ !inputs.neu_aufbauen }}
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: zustand
           key: zustand-neu
@@ -47,11 +49,13 @@ jobs:
       - name: Pipeline (neue Dateien holen, Ausgabe erzeugen)
         run: node scripts/pipeline/lauf.mjs --modus netz --zustand zustand --out ausgabe
 
+      # Schlüssel mit run_attempt: Cache-Einträge sind unveränderlich, ein Wiederholungsversuch desselben Laufs
+      # (gleiche run_id) würde sonst auf den schon gespeicherten Schlüssel treffen ("Cache save failed")
       - name: Zustand sichern
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: zustand
-          key: zustand-${{ github.run_id }}
+          key: zustand-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Ausgabe im Zweig data veröffentlichen
         env:

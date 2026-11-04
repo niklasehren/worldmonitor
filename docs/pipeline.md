@@ -17,7 +17,7 @@ Kennzeichnung: **gemessen** = lokal nachgemessen, **Schätzung** = Rechnung aus 
 ## Takt: 60 Minuten (beschlossen 04.11.2026; Begründung)
 - **Bedingung:** Daten höchstens etwa 90 Minuten alt. Mit 60 Minuten Takt ist der Stand direkt nach einem Lauf wenige Minuten alt und kurz vor dem nächsten ca. 60 bis 75 Minuten alt; GitHub verzögert geplante Läufe bei hoher Last (laut Doku besonders zu Stundenbeginn, daher Start um Minute :23). **Schätzung:** höchstens ca. 90 Minuten, wenn die Verzögerung unter 15 Minuten bleibt (Annahme).
 - **120 Minuten** würde das Alter auf bis zu ca. 130 Minuten heben und die Bedingung verfehlen; sie spart nur Laufzeit, die im öffentlichen Repo nichts kostet.
-- **Kosten:** GitHub-Doku (gelesen am 04.11.2026): „Standard GitHub-hosted runners in public repositories" sind in der Liste der kostenlosen Nutzung; größere Runner werden dagegen auch bei öffentlichen Repos berechnet (wir nutzen `ubuntu-latest`, Standard).
+- **Kosten:** GitHub-Doku (gelesen am 04.11.2026): „Standard GitHub-hosted runners in public repositories" sind in der Liste der kostenlosen Nutzung; größere Runner werden dagegen auch bei öffentlichen Repos berechnet (wir nutzen den Standard-Runner `ubuntu-24.04`, fest eingetragen).
 - Kürzer als 60 Minuten bringt wenig (GDELT-Raster 15 Minuten, Dateien erscheinen im Mittel ca. 8 Minuten vor dem Zeitstempel, gemessen in Runde 3).
 
 ## Laufzeit und Datenmenge
@@ -57,7 +57,9 @@ Kennzeichnung: **gemessen** = lokal nachgemessen, **Schätzung** = Rechnung aus 
 ## Dateien
 `.github/workflows/daten.yml` (Zeitplan und manueller Start mit „Zustand neu aufbauen"), `scripts/pipeline/lauf.mjs` (Ablauf, Modi `netz` und `cache`), `scripts/pipeline/zustand.mjs` (Zusammenfassung je Zeitpunkt, Kontext), `scripts/pipeline/veroeffentlichen.sh`, `scripts/lib/ausgabe.mjs` (gemeinsame Ausgabe), `scripts/lib/pipeline.mjs` (Pipeline), `scripts/lib/pipeline-cache.mjs` (Cache-Kontext), `config/gdelt-laender.txt` (GDELT-Länderliste, damit die Pipeline ohne Cache läuft), `config/anzeige.json`, `config/ausschluss.json`.
 Lokaler Trockenlauf: `node scripts/pipeline/lauf.mjs --modus cache` (Zustand in `data/pipeline-state-trocken`, Ausgabe in `data/trockenlauf/out`, beides nicht im Git).
-**Nicht getestet:** der Workflow selbst, das Veröffentlichen, die Cache-Schritte und die echten Downloads (kein Netz, kein Push). Vor dem ersten Lauf Action-Versionen (`@v4`) ggf. auf Commit-Kennungen festlegen.
+**Nicht getestet:** der Workflow selbst, das Veröffentlichen, die Cache-Schritte und die echten Downloads (kein Netz, kein Push). Action-Versionen sind nur als Hauptversion eingetragen (checkout@v7, setup-node@v7, cache@v6, alle Node 24); optional auf Commit-Kennungen festlegen.
+
+**Nach dem ersten echten Lauf (05.11.2026):** Der Push in `data` wird bis zu 3-mal wiederholt (30/60/120 s Pause); der Cache-Schlüssel enthält `run_attempt`, weil ein Wiederholungsversuch desselben Laufs sonst auf den schon gespeicherten Schlüssel trifft („Cache save failed"). Der Zustand wird vor dem Veröffentlichen gesichert; scheitert das Veröffentlichen, bleibt der Zustand gültig, und der nächste Lauf erzeugt die Ausgabe neu daraus.
 
 ## Beschluss 04.11.2026 und Prüfungen dazu
 - **CORS und Cache-Zeit von `raw.githubusercontent.com`:** gemessen (04.11.2026) an einer fremden öffentlichen Datei (Kopfzeilen): `access-control-allow-origin: *` und `cache-control: max-age=300` (5 Minuten). Eine GitHub-Dokumentation dazu habe ich nicht gefunden; Übertragung auf `niklasehren/worldmonitor` ist **Annahme**, erst nach dem ersten Lauf prüfbar (`curl -I https://raw.githubusercontent.com/niklasehren/worldmonitor/data/world.json`). Mit 5 Minuten Zwischenspeicher steigt das Datenalter um bis zu 5 Minuten (Einschätzung: bleibt unter ca. 90 Minuten).

@@ -14,5 +14,15 @@ git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 git add -A
 git commit -q -m "Daten, Stand ${stand}"
 basic="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
-git -c http.extraheader="AUTHORIZATION: basic ${basic}" push -q --force "https://github.com/${GITHUB_REPOSITORY}.git" data
+# GitHub meldet gelegentlich "Internal Server Error": bis zu 3 Wiederholungen nach 30, 60 und 120 s
+versuch=1
+for pause in 30 60 120 ""; do
+  if git -c http.extraheader="AUTHORIZATION: basic ${basic}" push -q --force "https://github.com/${GITHUB_REPOSITORY}.git" data; then
+    break
+  fi
+  [ -n "$pause" ] || { echo "Push in den Zweig data nach ${versuch} Versuchen gescheitert" >&2; exit 1; }
+  echo "Push gescheitert (Versuch ${versuch}), neuer Versuch in ${pause} s" >&2
+  sleep "$pause"
+  versuch=$((versuch + 1))
+done
 echo "Veröffentlicht: Zweig data, Stand ${stand}"
