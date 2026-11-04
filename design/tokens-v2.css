@@ -1,0 +1,20 @@
+/* WORLDMONITOR – Design-Tokens v2 (Quelle: DESIGN.md v2). Farben für Marker und Stufen aus design/referenz/ abgeleitet
+   (Medianwerte der gesättigten Pixel im PDF: Rot #E72A2C, Blau #3C7BC3); Text-Varianten aufgehellt, damit 4,5:1 erreicht wird.
+   Die alten v1-Tokens (design/tokens.css) bleiben nur für das Mockup bestehen. */
+:root {
+  --wm-bg:            #05080C;  /* fast schwarz */
+  --wm-glass:         rgba(10, 15, 22, 0.76);  /* gemessen: bei 0,68 fiel der rote Text auf hellem Grund auf 4,15:1; bei 0,76 hält er 4,86:1 */
+  --wm-glass-border:  rgba(255, 255, 255, 0.14);
+
+  --wm-text:          #F2F5F8;  /* 18,34:1 auf #05080C */
+  --wm-muted:         #A3AEBB;  /* 8,91:1 auf #05080C, 7,04:1 auf #1B232D */
+
+  /* Stufen: Fläche/Marker (nicht-Text, mind. 3:1) und Textvariante (mind. 4,5:1) */
+  --wm-top:           #E72A2C;  /* Referenz; 4,55:1 auf #05080C, 3,60:1 auf #1B232D */
+  --wm-top-text:      #FF6B6B;  /* 7,23:1 / 5,71:1 */
+  --wm-wichtig:       #3C7BC3;  /* Referenz; 4,60:1 / 3,63:1 */
+  --wm-wichtig-text:  #6FA8E8;  /* 8,07:1 / 6,37:1 */
+  --wm-rand:          #9AA3AE;  /* 7,86:1 / 6,21:1 (Fläche und Text) */
+
+  --wm-focus:         #6FA8E8;  /* Fokusrahmen, 8,07:1 */
+}

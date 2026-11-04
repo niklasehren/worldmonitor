@@ -1,0 +1,65 @@
+# Datenpipeline: holt neue 15-Minuten-Dateien von data.gdeltproject.org, schreibt den rollenden 48-Stunden-Zustand fort
+# und veröffentlicht world.json, Länderdateien und status.json im Zweig "data" (ein einziger Commit, wird jedes Mal ersetzt).
+# Zustand liegt im Actions-Cache (nicht im Repo). Ausführliche Beschreibung: docs/pipeline.md
+name: Daten
+
+on:
+  schedule:
+    # stündlich, bewusst nicht zur vollen Stunde (GitHub verzögert Läufe zu Stundenbeginn bei hoher Last)
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      neu_aufbauen:
+        description: "Zustand verwerfen und 48 Stunden neu auffüllen"
+        type: boolean
+        default: false
+
+concurrency:
+  group: daten
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # Zweig "data" schreiben
+  actions: write    # alte Cache-Einträge löschen
+
+jobs:
+  daten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Zustand wiederherstellen
+        if: ${{ !inputs.neu_aufbauen }}
+        uses: actions/cache/restore@v4
+        with:
+          path: zustand
+          key: zustand-neu
+          restore-keys: zustand-
+
+      - name: Pipeline (neue Dateien holen, Ausgabe erzeugen)
+        run: node scripts/pipeline/lauf.mjs --modus netz --zustand zustand --out ausgabe
+
+      - name: Zustand sichern
+        uses: actions/cache/save@v4
+        with:
+          path: zustand
+          key: zustand-${{ github.run_id }}
+
+      - name: Ausgabe im Zweig data veröffentlichen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/pipeline/veroeffentlichen.sh ausgabe
+
+      - name: Alte Zustands-Caches löschen (die zwei neuesten bleiben)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh cache list --key zustand- --sort created_at --order desc --limit 100 --json id --jq '.[2:][].id' | while read -r id; do gh cache delete "$id"; done

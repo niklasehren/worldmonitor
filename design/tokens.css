@@ -1,0 +1,39 @@
+/* WORLDMONITOR – Design-Tokens (Quelle: DESIGN.md)
+   Werden vom Mockup und später von der Tailwind-Konfiguration gemeinsam genutzt.
+   Kontrastwerte (WCAG, nachgerechnet 31.10.2026) stehen hinter den Farben. */
+
+@font-face { font-family: "Source Serif 4"; font-weight: 400; font-style: normal; font-display: swap; src: url("fonts/source-serif-4-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Source Serif 4"; font-weight: 600; font-style: normal; font-display: swap; src: url("fonts/source-serif-4-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("fonts/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("fonts/inter-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 400; font-style: normal; font-display: swap; src: url("fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+
+:root {
+  /* Flächen */
+  --wm-night:        #0E1A2B;  /* Nachtblau: Kopf, Karte */
+  --wm-night-raised: #16253A;  /* Panels auf dunklem Grund */
+  --wm-paper:        #F5F1E8;  /* Papierweiß: Lesespalten */
+  --wm-rule-paper:   #D9D2C3;  /* Trennlinie auf Papier (dekorativ) */
+  --wm-border-paper: #8C8473;  /* UI-Rahmen auf Papier, 3,29:1 */
+
+  /* Auf Papier */
+  --wm-ink:          #14202E;  /* Haupttext, 14,60:1 */
+  --wm-muted-paper:  #56606F;  /* gedämpfter Text, 5,65:1 */
+  --wm-gold-text:    #6F5319;  /* Gold als Text/Link, 6,36:1 */
+  --wm-gold-focus:   #7A5C1E;  /* Fokusrahmen, 5,52:1 */
+  --wm-critical:     #A63A32;  /* Kritisch, 5,69:1 */
+
+  /* Auf Nachtblau */
+  --wm-on-night:         #F5F1E8;  /* Haupttext, 15,51:1 (13,70:1 auf raised) */
+  --wm-muted-night:      #A9B3C1;  /* gedämpft, 8,25:1 (7,28:1) */
+  --wm-gold-night:       #C9A55C;  /* Gold Text/Fokus, 7,51:1 (6,63:1) */
+  --wm-critical-night:   #E0675D;  /* Kritisch, 5,22:1 (4,61:1) */
+
+  /* Dekoration / Marker (trägt keine Information allein) */
+  --wm-gold-deco:    #B08D4A;
+
+  /* Schriften */
+  --wm-font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --wm-font-sans:  "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --wm-font-mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}

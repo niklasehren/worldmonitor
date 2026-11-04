@@ -1,0 +1,10 @@
+{
+  "_hinweis": "ANNAHME des Modells (keine GDELT-Daten): grobe Weltregionen, Zuordnung nach FIPS-Code. Türkei zählt zu Naher Osten/Nordafrika, Russland zu Europa, Kaukasus und Zentralasien zu Asien, Sudan zu Afrika. Nicht aufgeführte Codes = 'Sonstige'.",
+  "Nordamerika": ["US","CA","GL","SB","BD"],
+  "Lateinamerika und Karibik": ["MX","BH","BL","BR","CI","CO","CS","CU","DO","DR","EC","ES","FG","FK","GJ","GP","GT","GY","HA","HO","JM","MB","MH","NU","PA","PE","PM","RQ","SC","ST","TD","TK","UY","VC","VE","VI","VQ","AC","AV","AA","BB","BF","CJ","AR","NS","NT","RN","TB","BQ","IP","SX","AN_"],
+  "Europa": ["AL","AN","AU","BE","BK","BO","BU","DA","EN","EI","EZ","FI","FR","GM","GR","HR","HU","IC","IT","LG","LH","LO","LS","LU","MD","MK","MJ","MN","MT","NL","NO","PL","PO","RI","RO","RS","SI","SM","SP","SW","SZ","UK","UP","VT","KV","GI","GK","IM","JE","FO","SV","JN","CY"],
+  "Naher Osten und Nordafrika": ["AG","BA","EG","GZ","IR","IZ","IS","JO","KU","LE","LY","MO","MU","QA","SA","SY","TS","TU","AE","WE","WI","YM","DX","AX"],
+  "Afrika (inkl. Sudan)": ["AO","BC","BN","BY","CD","CF","CG","CM","CN","CT","CV","DJ","ER","ET","GA","GB","GH","GV","EK","IV","KE","LI","LT","MA","MI","ML","MP","MR","MZ","NG","NI","OD","PU","RW","SE","SF","SG","SH","SL","SO","SU","TO","TP","TZ","UG","UV","WA","WZ","ZA","ZI","MF","RE","EU","GO","BS","JU","TE","CD"],
+  "Asien (inkl. Kaukasus, Zentralasien)": ["AF","AJ","AM","BG","BM","BT","BX","CB","CE","CH","GG","HK","ID","IN","JA","KG","KN","KS","KZ","LA","MC","MG","MV","MY","NP","PK","PF","PG","RP","SN","TH","TI","TW","TX","UZ","VM","TT","PJ"],
+  "Ozeanien": ["AS","AQ","BP","CQ","CR","CW","FJ","FM","FP","FQ","GQ","HQ","JQ","KR","KT","LQ","RM","NC","NF","NE","NH","NR","NZ","PC","PP","PS","TL","TN","TV","WF","WQ","WS","AT","MQ","DQ","KQ","IO","CK"]
+}

@@ -1,0 +1,208 @@
+{
+  "_hinweis": "Gewichtung für die Sortierung 'nach deiner Gewichtung' (siehe PLAN.md, Abschnitt Ranking). Startwerte der Faktoren sind Vorschläge und werden nach dem GDELT-Test eingestellt. Nicht gelistete Länder gelten als 'basis'. Länder stehen mit dem FIPS-Code von GDELT (nicht ISO). 'Palästina' = Gaza-Streifen (GZ) + Westjordanland (WE), weil GDELT keinen eigenen Code 'Palästina' kennt. 'erhoeht' enthält die EU-Länder außer Deutschland, Frankreich und Österreich (diese stehen bei 'hoch'). Slowakei = LO (GDELTs Liste beschriftet LO noch als 'Czechoslovakia', die FIPS-Bedeutung ist Slowakei; Annahme, bitte bei Gelegenheit gegenprüfen).",
+  "laender": {
+    "stufen": {
+      "basis": 1,
+      "erhoeht": 1.5,
+      "hoch": 2
+    },
+    "standard": "basis",
+    "zuordnung": {
+      "erhoeht": [
+        {
+          "name": "Belgium",
+          "fips": "BE"
+        },
+        {
+          "name": "Bulgaria",
+          "fips": "BU"
+        },
+        {
+          "name": "Croatia",
+          "fips": "HR"
+        },
+        {
+          "name": "Cyprus",
+          "fips": "CY"
+        },
+        {
+          "name": "Czech Republic",
+          "fips": "EZ"
+        },
+        {
+          "name": "Denmark",
+          "fips": "DA"
+        },
+        {
+          "name": "Estonia",
+          "fips": "EN"
+        },
+        {
+          "name": "Finland",
+          "fips": "FI"
+        },
+        {
+          "name": "Greece",
+          "fips": "GR"
+        },
+        {
+          "name": "Hungary",
+          "fips": "HU"
+        },
+        {
+          "name": "Ireland",
+          "fips": "EI"
+        },
+        {
+          "name": "Italy",
+          "fips": "IT"
+        },
+        {
+          "name": "Latvia",
+          "fips": "LG"
+        },
+        {
+          "name": "Lithuania",
+          "fips": "LH"
+        },
+        {
+          "name": "Luxembourg",
+          "fips": "LU"
+        },
+        {
+          "name": "Malta",
+          "fips": "MT"
+        },
+        {
+          "name": "Netherlands",
+          "fips": "NL"
+        },
+        {
+          "name": "Poland",
+          "fips": "PL"
+        },
+        {
+          "name": "Portugal",
+          "fips": "PO"
+        },
+        {
+          "name": "Romania",
+          "fips": "RO"
+        },
+        {
+          "name": "Slovakia",
+          "fips": "LO"
+        },
+        {
+          "name": "Slovenia",
+          "fips": "SI"
+        },
+        {
+          "name": "Spain",
+          "fips": "SP"
+        },
+        {
+          "name": "Sweden",
+          "fips": "SW"
+        },
+        {
+          "name": "India",
+          "fips": "IN"
+        },
+        {
+          "name": "Japan",
+          "fips": "JA"
+        },
+        {
+          "name": "Taiwan",
+          "fips": "TW"
+        },
+        {
+          "name": "Saudi Arabia",
+          "fips": "SA"
+        },
+        {
+          "name": "United Arab Emirates",
+          "fips": "AE"
+        },
+        {
+          "name": "Switzerland",
+          "fips": "SZ"
+        }
+      ],
+      "hoch": [
+        {
+          "name": "United States",
+          "fips": "US"
+        },
+        {
+          "name": "Russia",
+          "fips": "RS"
+        },
+        {
+          "name": "China",
+          "fips": "CH"
+        },
+        {
+          "name": "Ukraine",
+          "fips": "UP"
+        },
+        {
+          "name": "Israel",
+          "fips": "IS"
+        },
+        {
+          "name": "Gaza Strip",
+          "fips": "GZ"
+        },
+        {
+          "name": "West Bank",
+          "fips": "WE"
+        },
+        {
+          "name": "Iran",
+          "fips": "IR"
+        },
+        {
+          "name": "Germany",
+          "fips": "GM"
+        },
+        {
+          "name": "France",
+          "fips": "FR"
+        },
+        {
+          "name": "United Kingdom",
+          "fips": "UK"
+        },
+        {
+          "name": "Austria",
+          "fips": "AU"
+        },
+        {
+          "name": "Turkey",
+          "fips": "TU"
+        }
+      ]
+    }
+  },
+  "themen": {
+    "stufen": {
+      "1": 1,
+      "2": 1.5,
+      "3": 2
+    },
+    "zuordnung": {
+      "1": [],
+      "2": [],
+      "3": []
+    }
+  },
+  "aktualitaet": {
+    "halbwertszeit_stunden": 12
+  },
+  "medienzahl": {
+    "skala": "roh",
+    "_hinweis": "Mögliche Werte: 'roh' oder 'log' (log(1 + M)). Welche Variante gilt, entscheidet der GDELT-Test."
+  }
+}

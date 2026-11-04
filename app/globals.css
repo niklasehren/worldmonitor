@@ -1,0 +1,101 @@
+@import "tailwindcss";
+@import "../design/tokens-v2.css";
+
+@theme inline {
+  --color-bg: var(--wm-bg);
+  --color-text: var(--wm-text);
+  --color-muted: var(--wm-muted);
+  --color-top: var(--wm-top);
+  --color-top-text: var(--wm-top-text);
+  --color-wichtig: var(--wm-wichtig);
+  --color-wichtig-text: var(--wm-wichtig-text);
+  --color-rand: var(--wm-rand);
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jb-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    overscroll-behavior: none;
+  }
+  body {
+    background: var(--wm-bg);
+    color: var(--wm-text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--wm-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* Schwebende Glasflächen. Der Weichzeichner hängt an EINER Variablen (--wm-blur); der Test-Schalter ?glas=0 (Klasse wm-ohne-glas
+   an der Wurzel) setzt sie auf none und macht den Hintergrund fast deckend. */
+:root { --wm-blur: blur(14px) saturate(120%) brightness(0.45); }
+.wm-ohne-glas { --wm-blur: none; --wm-glass: rgba(10, 15, 22, 0.96); }
+.glass {
+  background: var(--wm-glass);
+  /* brightness(0.45): begrenzt die Helligkeit des Untergrunds (Nachtlichter, Schnee), damit der Text auch dort 4,5:1 hält */
+  -webkit-backdrop-filter: var(--wm-blur);
+  backdrop-filter: var(--wm-blur);
+  border: 1px solid var(--wm-glass-border);
+  border-radius: 14px;
+}
+
+/* Marker auf dem Globus (HTML-Knöpfe, damit Zahl und Bedienung per Tastatur möglich sind) */
+.wm-marker {
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: var(--wm-bg);
+  font-family: var(--font-jb-mono), ui-monospace, monospace;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.wm-marker--top { width: 34px; height: 34px; font-size: 15px; background: var(--wm-top); box-shadow: 0 0 0 5px rgba(231, 42, 44, 0.25), 0 0 22px rgba(231, 42, 44, 0.65); }
+.wm-marker--wichtig { width: 26px; height: 26px; font-size: 13px; background: var(--wm-wichtig); box-shadow: 0 0 0 4px rgba(60, 123, 195, 0.25), 0 0 14px rgba(60, 123, 195, 0.55); }
+.wm-marker--rand { width: 20px; height: 20px; font-size: 11px; background: var(--wm-rand); border-width: 1.5px; box-shadow: 0 0 0 3px rgba(154, 163, 174, 0.2); }
+.wm-marker--gruppe { width: 36px; height: 36px; font-size: 15px; background: var(--wm-text); border-width: 2px; box-shadow: 0 0 0 5px rgba(242, 245, 248, 0.2), 0 0 18px rgba(242, 245, 248, 0.35); }
+.wm-marker[aria-pressed="true"] { outline: 2px solid var(--wm-text); outline-offset: 4px; }
+
+/* Weicher Atmosphärenrand um den Globus (Radius --r und Mitte --cx/--cy kommen aus Globe.tsx): hell am Rand, fällt nach außen ab */
+.wm-glow {
+  background: radial-gradient(
+    circle at var(--cx, 50%) var(--cy, 50%),
+    transparent calc(var(--r, 0px) * 0.9),
+    rgba(70, 130, 220, 0.08) calc(var(--r, 0px) * 0.96),
+    rgba(100, 165, 250, 0.26) calc(var(--r, 0px) * 0.99),
+    rgba(135, 195, 255, 0.46) calc(var(--r, 0px) * 1.002),
+    rgba(100, 160, 245, 0.30) calc(var(--r, 0px) * 1.015),
+    rgba(70, 125, 225, 0.17) calc(var(--r, 0px) * 1.04),
+    rgba(50, 100, 200, 0.08) calc(var(--r, 0px) * 1.08),
+    rgba(35, 75, 165, 0.03) calc(var(--r, 0px) * 1.16),
+    transparent calc(var(--r, 0px) * 1.3)
+  );
+}
+
+.maplibregl-canvas { outline: none; }
+/* Touch: Ziehen und Zwei-Finger-Zoom gehören dem Globus, die Seite scrollt dabei nicht mit */
+.maplibregl-map,
+.maplibregl-map .maplibregl-canvas-container,
+.maplibregl-map .maplibregl-canvas {
+  touch-action: none !important;
+}
+/* Marker auf der Rückseite: ausgeblendet (MapLibre setzt dann opacity 0), nicht anklickbar */
+.wm-marker { transition: opacity 0.2s; }
+.maplibregl-marker-covered { pointer-events: none; }
+.maplibregl-ctrl-group { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

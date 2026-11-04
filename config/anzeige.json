@@ -1,0 +1,7 @@
+{
+  "_hinweis": "Anzeige-Regeln für die Datenerzeugung (C2). maxProLandTop8: höchstens so viele Meldungen je Land in den Top 8, die nächste rückt nach (Land = erstes Land der Geschichte; Meldungen ohne Land sind nicht begrenzt).",
+  "maxProLandTop8": 2,
+  "fensterStunden": 48,
+  "wenigGrenze": 3,
+  "konflikt": { "mindestEreignisse": 30 }
+}

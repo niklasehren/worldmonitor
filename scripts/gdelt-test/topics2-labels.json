@@ -1,0 +1,9 @@
+{
+  "_hinweis": "Einschätzung des Modells nach Titel. P = passt, U = unklar, N = passt nicht. Reihenfolge = Nummerierung der Ausgabe von topics2-judge.mjs (einzigartige Titel je Thema in Reihenfolge der Methoden M1, M2, M3). Gilt nur für die Stichprobe vom 01.11.2026 (feste Zufallszahl).",
+  "konflikte":  "NNNNNNPUUUNUNNUNUNUNPNUNPNUPNUPNPPPPUUPUNUUNUUPNUUUN",
+  "diplomatie": "NPNNNNNNNUPNUNNNNNPPNNPPPPNPPPPPNNUNNUNNNPP",
+  "sanktionen": "NNUUUNNUNNNNNNNNUNNNPUUU",
+  "wahlen":     "PUPNNPPNPPNUNNPPNNUPUPPPPPNPPPPPPNUUPPUPU",
+  "energie":    "PNNPPUUNNPNNNNNNNNNNPPPPPPPPPPPPPPPPNNNNUNUN",
+  "maerkte":    "PNPUPPPUPNPPPPPPNPPNPPPPPPPNPPPPPPPUPPUUN"
+}

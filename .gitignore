@@ -1,0 +1,47 @@
+# Geheimnisse: niemals in Git
+.env*
+!.env.example
+
+# Abhängigkeiten und Build-Ergebnisse (werden neu erzeugt)
+node_modules/
+.npm-cache/
+
+# Rohdaten des GDELT-Tests (nur lokal, nie in Git)
+data/
+
+# Länderdateien (C1): Beispiele für fünf Länder und die Länderliste sind im Git, der Rest wird erzeugt
+!/public/data/
+/public/data/countries/*
+!/public/data/countries/index.json
+!/public/data/countries/DE.json
+!/public/data/countries/UA.json
+!/public/data/countries/IR.json
+!/public/data/countries/MA.json
+!/public/data/countries/KN.json
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel-Verknüpfung (lokal)
+.vercel/
+
+# macOS
+.DS_Store
+
+# Referenzbilder (nur lokal)
+design/referenz/
+
+# Von next dev automatisch erzeugt
+AGENTS.md
+/public/data/world.json
+
+# Screenshots (nur lokal)
+design/screens/
+
+# Pipeline-Arbeitsordner (lokal oder in Actions)
+/zustand/
+/ausgabe/
+
+# Aufgabenberichte (nur lokal, enthalten lokale Pfade)
+docs/bericht-*.md
