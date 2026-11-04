@@ -300,9 +300,18 @@ export function bauePipeline(ctx, startMin, endMin_, o = {}) {
       }
     }
     out.laender = new Map();
+    // Dieselbe Zählweise wie in der Weltliste: Gehört ein Länder-Cluster zu einer anzeigbaren weltweit zusammengefassten Geschichte,
+    // wird diese (mit ihrer Medienzahl) angezeigt. Sonst würde dieselbe Meldung je Land mit weniger oder anderen Domains gezählt (927 gegen 345).
+    const weltVon = new Map();
+    for (const gc of g.clusters) if (!gc.grund && gc.lesbar) for (const s of gc.members) weltVon.set(s.key, gc);
     for (const [iso, e] of byIso) {
       const m = mk(topN(e.ernst, CPOOL));
       m.clusters.forEach(klar);
+      const gesehen = new Set();
+      m.clusters = m.clusters.map((c) => {
+        const w = c.members.map((s) => weltVon.get(s.key)).filter(Boolean).sort((a, b) => b.medien - a.medien)[0];
+        return w ?? c;
+      }).filter((c) => !gesehen.has(c) && gesehen.add(c)).sort((a, b) => b.medien - a.medien);
       out.laender.set(iso, { alle: e.alle, ernst: e.ernst.length, clusters: m.clusters });
     }
   }

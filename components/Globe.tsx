@@ -216,7 +216,7 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
 
   // Marker als Knöpfe mit Zahl (Daten kommen später als die Karte). Liegen Marker auf dem Bildschirm zu dicht beieinander
   // (Abstand unter GRUPPEN_ABSTAND Pixel, nur Vorderseite), werden sie zu einer Gruppe mit Zahl zusammengefasst:
-  // Klick zoomt hinein (bis zur Zoomgrenze); liegen alle im selben Land, öffnet der Klick das Land (die Liste links nennt alle Meldungen).
+  // Klick öffnet eine Liste der enthaltenen Meldungen (Zeile wählt die Meldung; bei mehreren Ländern auch „Hineinzoomen").
   const regroupRef = useRef<(() => void) | null>(null);
   const selectedRef = useRef<number | null>(null);
   selectedRef.current = selectedNr;
@@ -240,7 +240,49 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
     }
     let gruppen: Marker[] = [];
     const rad = Math.PI / 180;
+    // Liste der Meldungen einer Gruppe: Klick auf eine Zeile wählt die Meldung, bei mehreren Ländern zusätzlich „Hineinzoomen"
+    let liste: HTMLDivElement | null = null;
+    const schliesseListe = () => { liste?.remove(); liste = null; };
+    const zeigeListe = (knopf: HTMLElement, mitglieder: MarkerData[], mitte: [number, number], zoomen: boolean) => {
+      schliesseListe();
+      const box = map.getContainer(), kb = knopf.getBoundingClientRect(), bb = box.getBoundingClientRect();
+      const d = document.createElement("div");
+      d.className = "wm-gruppenliste";
+      d.setAttribute("role", "dialog");
+      d.setAttribute("aria-label", "Meldungen in dieser Gruppe");
+      d.addEventListener("click", (e) => e.stopPropagation());
+      for (const m of mitglieder) {
+        const z = document.createElement("button");
+        z.type = "button";
+        z.innerHTML = "<b></b><span></span>";
+        z.firstElementChild!.textContent = String(m.nr);
+        z.lastElementChild!.textContent = m.label;
+        z.addEventListener("click", () => { schliesseListe(); cb.current.onSelectPoint(m.nr); });
+        d.appendChild(z);
+      }
+      if (zoomen) {
+        const z = document.createElement("button");
+        z.type = "button";
+        z.className = "wm-gruppenliste-zoom";
+        z.textContent = "Hineinzoomen";
+        z.addEventListener("click", () => { schliesseListe(); map.easeTo({ center: mitte, zoom: Math.min(limitZoom.current, map.getZoom() + 1.5), duration: 800 }); });
+        d.appendChild(z);
+      }
+      box.appendChild(d);
+      const w = d.offsetWidth, h = d.offsetHeight;
+      const x = Math.max(8, Math.min(bb.width - w - 8, kb.left - bb.left + kb.width / 2 - w / 2));
+      const unten = kb.bottom - bb.top + 10, oben = kb.top - bb.top - 10 - h;
+      d.style.left = `${x}px`;
+      d.style.top = `${Math.max(8, unten + h <= bb.height - 8 ? unten : oben)}px`;
+      liste = d;
+      (d.querySelector("button") as HTMLElement | null)?.focus();
+    };
+    const taste = (e: KeyboardEvent) => { if (e.key === "Escape") schliesseListe(); };
+    document.addEventListener("keydown", taste);
+    map.on("click", schliesseListe);
+    map.on("movestart", schliesseListe);
     const regroup = () => {
+      schliesseListe();
       for (const g of gruppen) g.remove();
       gruppen = [];
       const c = map.getCenter();
@@ -259,16 +301,17 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
         mem.forEach((k) => { used.add(k); items[k].el.style.display = "none"; });
         const lon = mem.reduce((a, k) => a + items[k].p.lon, 0) / mem.length, lat = mem.reduce((a, k) => a + items[k].p.lat, 0) / mem.length;
         const nrs = mem.map((k) => items[k].p.nr), isos = new Set(mem.map((k) => items[k].p.iso));
+        // Gruppe = Pillenform mit den enthaltenen Rängen („1 · 2"), damit sie nicht wie ein Rang-Marker aussieht
+        const rang = [...nrs].sort((a, b) => a - b);
         const g = document.createElement("button");
         g.type = "button";
         g.className = "wm-marker wm-marker--gruppe";
-        g.textContent = String(mem.length);
+        g.textContent = rang.length <= 3 ? rang.join(" · ") : `${rang.slice(0, 2).join(" · ")} +${rang.length - 2}`;
         g.setAttribute("aria-pressed", String(nrs.includes(selectedRef.current ?? -1)));
-        g.setAttribute("aria-label", `${mem.length} Meldungen in der Nähe (Nr. ${nrs.join(", ")}); Klick ${isos.size === 1 ? "öffnet das Land" : "zoomt hinein"}`);
+        g.setAttribute("aria-label", `Gruppe aus ${mem.length} Meldungen (Rang ${rang.join(", ")}); Klick zeigt die Liste`);
         g.addEventListener("click", (e) => {
           e.stopPropagation();
-          if (isos.size === 1) { cb.current.onSelectPoint(nrs[0]); return; }
-          map.easeTo({ center: [lon, lat], zoom: Math.min(limitZoom.current, map.getZoom() + 1.5), duration: 800 });
+          zeigeListe(g, mem.map((k) => items[k].p).sort((a, b) => a.nr - b.nr), [lon, lat], isos.size > 1);
         });
         gruppen.push(new Marker({ element: g, anchor: "center", opacityWhenCovered: "0" }).setLngLat([lon, lat]).addTo(map));
       }
@@ -280,6 +323,10 @@ export function Globe({ markers: markerData, glow, gruppen: gruppieren, selected
     return () => {
       map.off("moveend", regroup);
       map.off("zoomend", regroup);
+      map.off("click", schliesseListe);
+      map.off("movestart", schliesseListe);
+      document.removeEventListener("keydown", taste);
+      schliesseListe();
       regroupRef.current = null;
       for (const g of gruppen) g.remove();
       for (const i of items) i.marker.remove();
